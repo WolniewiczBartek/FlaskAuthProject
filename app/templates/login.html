@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+{% block main %}
+<div id=login>
+    <h2>Login</h2>
+    <form method=post>
+      <input type=text name=email placeholder="Email" autofocus><br>
+      <input type=password name=password placeholder=Hasło><br>
+      <input type=submit value="Zaloguj się!">
+    </form>
+</div>
+{% endblock %}
+
