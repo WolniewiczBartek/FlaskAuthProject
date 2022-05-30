@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Users{% endblock %}
+{% block main %}
+    {% if users %}
+        {% for user in users %}
+            {{user.id, user.email, user.first_name}}
+            <br>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
