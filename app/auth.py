@@ -1,13 +1,32 @@
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask_login import login_user, login_required, logout_user, current_user
+from .models import User, Order
+from . import db
+from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import date
+
 
 auth = Blueprint('auth', __name__)
 
 @auth.route('/login', methods = ['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        return request.data
-    else:
-        return render_template("login.html")
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        user = User.query.filter_by(email=email).first()
+        
+        if not user:
+            flash('Nieprawidłowy email', category='error')
+        else:
+            if not check_password_hash(user.password, password):
+                flash('Nieprawidłowe hasło', category='error')
+            else:
+                flash('Zalogowano', category='success')
+                login_user(user, remember=True)
+                return redirect(url_for('views.home', user=current_user))
+                    
+    return render_template('login.html', user=current_user)
 
 @auth.route('/register', methods = ['GET', 'POST'])
 def register():
@@ -16,24 +35,34 @@ def register():
         email = request.form.get('email')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
-        first_name = request.form.get('first_name')
-        last_name = request.form.get('last_name')
+        f_name = request.form.get('first_name')
+        l_name = request.form.get('last_name')
         birthday = request.form.get('birthday')
-
-        if len(email) < 3:
+        
+        exists = User.query.filter_by(email=email).first()
+        
+        if exists:
+            flash('Ten email już istnieje', category='error')
+        elif len(email) < 3:
             flash('Nieprawidłowy email', category='error')
-        elif len(first_name) < 2:
+        elif len(f_name) < 2:
             flash('Nieprawidłowe imię', category='error')
         elif len(password1) < 5:
             flash('Zbyt krótkie hasło', category='error')
         elif password1 != password2:
             flash('Różne hasła', category='error')
         else:
-            flash('Konto stworzone', category='succsess')
-        
-    
-    return render_template("register.html")
+            user = User(email=email, password=generate_password_hash(password1, method='sha256'), first_name=f_name, last_name=l_name, birthday=date(int(birthday[:4]), int(birthday[5:7]), int(birthday[8:])))
+            db.session.add(user)
+            db.session.commit()
+            login_user(user, remember=True)
+            flash('Konto stworzone', category='success')
+            return redirect(url_for('views.home', user=current_user))
+            
+    return render_template('register.html', user=current_user)
 
 @auth.route('/logout')
+@login_required
 def logout():
-    return "logout"
+    logout_user()
+    return redirect(url_for('auth.login'))
