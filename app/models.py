@@ -15,3 +15,6 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(100))
     birthday = db.Column(db.Date, default=func.now())
     orders = db.relationship('Order')
+    
+    def __repr__(self):
+        return f'<User {self.email}>'
