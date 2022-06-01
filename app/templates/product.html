@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }}{% endblock %}
+{% block main %}
+    {% if product %}
+        
+
+        <h1>{{ product.name }}</h1>
+        <div class="single-product-container">
+            <h3>{{ product.name }}<h3>
+            <img src="{{url_for('static', filename='images/' + product.photo)}}" class="bigimg">
+            <h3>Cena: {{ product.price }}<h3>
+        </div>
+
+    {% else %}
+        
+        <div>Brak informacji o tym produkcie produkcie</div>
+    
+    {% endif %}
+{% endblock %}
