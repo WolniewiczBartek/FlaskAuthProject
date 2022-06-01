@@ -4,7 +4,7 @@
 {% block main %}
     {% if users %}
         {% for user in users %}
-            {{user.id, user.email, user.first_name}}
+            {{user.id, user.role_id, user.email, user.first_name, user.orders}}
             <br>
         {% endfor %}
     {% endif %}
