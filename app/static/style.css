@@ -1,0 +1,11 @@
+.product-container{
+    border: 1px solid gray;
+}
+.smallimg{
+    width: 150px;
+    height: 150px;
+}
+.bigimg{
+    width: 450px;
+    height: 450px;
+}
