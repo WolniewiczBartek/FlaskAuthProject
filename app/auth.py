@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from flask_login import login_user, login_required, logout_user, current_user
-from .models import User, Order
+from .models import User, Order, Role
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
@@ -52,7 +52,7 @@ def register():
         elif password1 != password2:
             flash('Różne hasła', category='error')
         else:
-            user = User(email=email, password=generate_password_hash(password1, method='sha256'), first_name=f_name, last_name=l_name, birthday=date(int(birthday[:4]), int(birthday[5:7]), int(birthday[8:])))
+            user = User(email=email, role_id=3, password=generate_password_hash(password1, method='sha256'), first_name=f_name, last_name=l_name, birthday=date(int(birthday[:4]), int(birthday[5:7]), int(birthday[8:])))
             db.session.add(user)
             db.session.commit()
             login_user(user, remember=True)
@@ -65,4 +65,5 @@ def register():
 @login_required
 def logout():
     logout_user()
+    session.pop('cart', default=None)
     return redirect(url_for('auth.login'))
