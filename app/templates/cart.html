@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Koszyk{% endblock %}
+{% block main %}
+    {% from models import Product %}
+    {% if cart %}
+        
+        {% for i in cart %}
+            {{ Product.query.filter_by(id=i).first() }}
+        {% endfor %}
+        <br>
+    {% else %}
+        
+        <div>Koszyk jest pusty</div>
+
+    {% endif %}
+{% endblock %}
